@@ -18,6 +18,20 @@ if "LOCAL_CHECK" in os.environ:
                 port=url.port
         )
         cursor = conn.cursor()
+def slack_notification(message):
+    headers = {
+        "Content-Type": "application/json"
+    }
+    data = json.dumps({
+        "channel": "#flashpoint",
+        "text":"Following error occured while updating KWOC database.\n{}".format(message)
+    })
+    r = requests.post(
+        os.environ["SLACK_WEBHOOK_URL"], headers=headers, data=data)
+
+    if r.status_code != 200:
+        print("in slack_notification : {}".format(r.status_code))
+        print(r.text)
 
 def updateProjectImage():
     global conn, cursor
@@ -148,18 +162,4 @@ if __name__ == "__main__" :
     updateProjectImage()
     updateForkNo()
 
-def slack_notification(message):
-    headers = {
-        "Content-Type": "application/json"
-    }
-    data = json.dumps({
-        "channel": "#flashpoint",
-        "text":"Following error occured while updating KWOC database.\n{}".format(message)
-    })
-    r = requests.post(
-        os.environ["SLACK_WEBHOOK_URL"], headers=headers, data=data)
-
-    if r.status_code != 200:
-        print("in slack_notification : {}".format(r.status_code))
-        print(r.text)
 
