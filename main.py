@@ -2,6 +2,8 @@ import psycopg2
 import requests
 import os
 import traceback
+import json
+
 try:
         import urlparse
 except Exception as e:
