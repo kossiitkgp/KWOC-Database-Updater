@@ -74,10 +74,12 @@ def getimageURL(githubUsername) :  # getting the image url from github
             return response["items"][0]["avatar_url"]
             # return unicode(response["items"][0]["avatar_url"] , "utf-8")
         else :
-            slack_notification ("Got more than one result for {} while serching for images".format(githubUsername))
+            for item in response["items"] :
+                if item["login"] == githubUsername :
+                    return item["avatar_url"]
+            slack_notification ("Unable to find image for {} ".format(githubUsername))
             return False 
     except :
-        print ("Unable to retrive image url for {}\nGot following error :{}".format(githubUsername,traceback.format_exc()))
         slack_notification("Unable to retrive image url for {}\nGot following error :{}".format(githubUsername,traceback.format_exc()))
         return False 
 
