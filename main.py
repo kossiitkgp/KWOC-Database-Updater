@@ -44,7 +44,7 @@ def updateProjectImage():
         cursor.execute(query)
         # projectsData=list()
         for index,row in enumerate(cursor.fetchall()) :
-            if not row[7] :   #checking if a valid image url is already present 
+            if not row[7] or row[7] == "http://i.imgur.com/nx6cwcv.png" :   #checking if a valid image url is already present 
                 handle=row[0][:]
                 imgURL=getimageURL(handle.split("/")[0])
                 if imgURL :
