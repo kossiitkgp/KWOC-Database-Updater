@@ -38,12 +38,15 @@ def updateProjectImage():
     global conn, cursor
     if "LOCAL_CHECK" not in os.environ:
             msg = "Database Connection cannot be set since you are running website locally"
-            print (msg)
+            slack_notification (msg)
+            return 0 
     query="SELECT * FROM project"
     try:
         cursor.execute(query)
         # projectsData=list()
         for index,row in enumerate(cursor.fetchall()) :
+            if row[1] == "df" and row[2] == "df" :
+                continue
             if not row[7] or row[7] == "http://i.imgur.com/nx6cwcv.png" :   #checking if a valid image url is already present 
                 handle=row[0][:]
                 imgURL=getimageURL(handle.split("/")[0])
