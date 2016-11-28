@@ -25,7 +25,6 @@ def slack_notification(message):
         "Content-Type": "application/json"
     }
     data = json.dumps({
-        "channel": "#flashpoint",
         "text":"Following error occured while updating KWOC database.\n{}".format(message)
     })
     r = requests.post(
@@ -113,7 +112,11 @@ def getforks(projectHandle):
     baseQuery="https://api.github.com/repos/{}?access_token={}".format(projectHandle,os.environ["DEFCON_GITHUB_AUTH_TOKEN"])
     try :
         response = requests.get(baseQuery).json()
-        forkNo = response["forks"]
+        forkNo = response["forks_count"]
+        if projectHandle == "AvijitGhosh82/sheldonisms" :
+            print ("Got sheldon")
+            print (response)
+        # print (baseQuery + str(forkNo))
         return forkNo
     except :
         error_msg = "Unable to get total forks for {}.\nFollowing error occured : {}".format(projectHandle,traceback.format_exc())
