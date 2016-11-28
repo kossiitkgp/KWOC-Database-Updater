@@ -113,10 +113,6 @@ def getforks(projectHandle):
     try :
         response = requests.get(baseQuery).json()
         forkNo = response["forks_count"]
-        if projectHandle == "AvijitGhosh82/sheldonisms" :
-            print ("Got sheldon")
-            print (response)
-        # print (baseQuery + str(forkNo))
         return forkNo
     except :
         error_msg = "Unable to get total forks for {}.\nFollowing error occured : {}".format(projectHandle,traceback.format_exc())
