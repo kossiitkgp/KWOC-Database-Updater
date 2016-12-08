@@ -61,13 +61,13 @@ def getProjectsJson(repo) :
 
 def getCommitsOffline(studentHandle,repo) :
     allCommits = json.load(open("projectsJSON/{}.json".format(repo.replace("/",".")) , "r"))
-    dec1Timestamp = datetime.fromtimestamp(1480575375)
+    dec1Timestamp = datetime.fromtimestamp(1480204800)
     commits = 0
     try :
         for data in allCommits :
             if data["author"]["login"].lower() == studentHandle.lower() :
                 for week in data["weeks"] :
-                    if dec1Timestamp < datetime.fromtimestamp(int(week['w'])) :
+                    if dec1Timestamp <= datetime.fromtimestamp(int(week['w'])) :
                         commits+=int(week["c"])
         return commits 
     except TypeError :
@@ -95,4 +95,4 @@ def slack_notification(message):
                 print("in slack_notification : {}".format(r.status_code))
                 print(r.text)
 if __name__ == '__main__':
-    print getCommitsOffline('defcon-007', 'defcon-007/utilobot')
+    print getCommitsOffline('AvijitGhosh82', 'AvijitGhosh82/material-chess-android')
