@@ -2,8 +2,8 @@ import requests
 import traceback 
 import json 
 import os
-
-def get_commits(username, repo_name):
+from pprint import pprint
+def get_commitsOnline(username, repo_name):
     '''
     username : 'kshitij10496'
     repo_name : 'kshitij10496/IIKH'
@@ -39,6 +39,33 @@ def get_commits(username, repo_name):
         msg = "Unable to get commits in {} repo.\nFollowing error occured : {}".format(repo_name,traceback.format_exc())
         slack_notification(msg)
         return 0
+
+def getProjectsJson(repo) :
+    query = "https://api.github.com/repos/{}/stats/contributors?access_token={}".format(repo,os.environ["DEFCON_GITHUB_AUTH_TOKEN"])
+    print ("Getting details for {}".format(repo))
+    response = requests.get(query).json()
+    try :
+        if "rate limit exceeded" in response["message"] :
+            pprint(response)
+            print("Unable to get {}".format(repo))
+    except TypeError:
+        pass
+    json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
+
+def getCommitsOffline(studentHandle,repo) :
+    allCommits = json.load(open("projectsJSON/{}.json".format(repo.replace("/",".")) , "r"))
+    commits = 0
+    try :
+        for data in allCommits :
+            if data["author"]["login"].lower() == studentHandle.lower() :
+                commits+=int(data["total"])
+        return commits 
+    except TypeError :
+        pprint (allCommits)
+        msg = "Unable to get commits for {} in {}.\nFollowing error occured : {}".format(studentHandle,repo,traceback.format_exc())
+        # slack_notification(msg)
+        print (msg)
+        return 0   
 
 
 def slack_notification(message):
