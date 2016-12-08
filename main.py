@@ -50,21 +50,30 @@ def updateCommits():
         studentList = cursor.fetchall()
         cursor.execute(query2)
         projectsList = cursor.fetchall()
-        for index,student in enumerate(studentList) :
+        print projectsList
+        for student in studentList :
+            print ("Getting commits for {}".format(student[0]))
             commits = 0
             for project in  projectsList :
+                if not project[0] :
+                    continue
                 try :
+                    # print ("Getting commits for {}".format(student[0]))
                     commits += getCommitsOffline(student[0],project[0])
                     print ("Got {} commits for {} in {}".format(commits,student[0],project[0]))
                 except :
                     error_msg = "Unable to get commits for {} in project {}.\nGot following error : {}".format(student[0],project[0],traceback.format_exc())
                     print (error_msg)
+            print ("Updating database")
             updateQuery = "UPDATE student SET commits = '%s' where git_handle='%s'" % (str(commits),student[0]) 
             try :  #updating commits in student database 
                 cursor.execute(updateQuery)
                 conn.commit()
+                
+                print ("Database updated")
             except :
                 conn.rollback()
+                
                 error_msg = "Unable to update commits for {} .\nFollowing error occured{}".format(student[0],traceback.format_exc())
                 print(error_msg)
                 # slack_notification (error_msg)
@@ -78,29 +87,30 @@ def updateCommits():
             # getCommitsOfStudent(student[0] , projectsList)
     except:
             conn.rollback()
+            
             error_msg = "Unable to get all projects/students \nFollowing error occured {}".format(
                     traceback.format_exc())
             print (error_msg)
             # slack_notification (error_msg)    
-def getCommitsOfStudent(student,projectsList) :
-    global conn,cursor
-    commits = 0
-    for project in  projectsList :
-        try :
-            commits += get_commits(student,project[0])
-            print ("Got {} commits for {} in {}".format(commits,student,project[0]))
-        except :
-            error_msg = "Unable to get commits for {} in project {}.\nGot following error : {}".format(student,project[0],traceback.format_exc())
-            print (error_msg)
-    updateQuery = "UPDATE student SET commits = '%s' where git_handle='%s'" % (str(commits),student) 
-    try :  #updating commits in student database 
-        cursor.execute(updateQuery)
-        conn.commit()
-    except :
-        conn.rollback()
-        error_msg = "Unable to update commits for {} .\nFollowing error occured{}".format(student,traceback.format_exc())
-        print(error_msg)
-        # slack_notification (error_msg)
+# def getCommitsOfStudent(student,projectsList) :
+#     global conn,cursor
+#     commits = 0
+#     for project in  projectsList :
+#         try :
+#             commits += get_commits(student,project[0])
+#             print ("Got {} commits for {} in {}".format(commits,student,project[0]))
+#         except :
+#             error_msg = "Unable to get commits for {} in project {}.\nGot following error : {}".format(student,project[0],traceback.format_exc())
+#             print (error_msg)
+#     updateQuery = "UPDATE student SET commits = '%s' where git_handle='%s'" % (str(commits),student) 
+#     try :  #updating commits in student database 
+#         cursor.execute(updateQuery)
+#         conn.commit()
+#     except :
+#         conn.rollback()
+#         error_msg = "Unable to update commits for {} .\nFollowing error occured{}".format(student,traceback.format_exc())
+#         print(error_msg)
+#         # slack_notification (error_msg)
 def updateProjectsJSON() :
     global conn, cursor
     if "LOCAL_CHECK" not in os.environ:
@@ -112,6 +122,8 @@ def updateProjectsJSON() :
         cursor.execute(query)
         projectsList = cursor.fetchall()
         for index,project in enumerate(projectsList) :
+            if not project[0] :
+                continue
             getProjectsJson(project[0])
     except:
             conn.rollback()
@@ -144,13 +156,16 @@ def updateProjectImage():
                 try :  #updating image URL in the database 
                     cursor.execute(updateQuery)
                     conn.commit()
+                    
                 except :
                     conn.rollback()
+                    
                     error_msg = "Unable to update image url {} for {}.\nFollowing error occured{}".format(imgURL,row[0],
                 traceback.format_exc())
                     slack_notification (error_msg)
     except:
             conn.rollback()
+            
             error_msg = "Unable to get all projects\nFollowing error occured {}".format(
                     traceback.format_exc())
             slack_notification (error_msg)
@@ -189,13 +204,16 @@ def updateForkNo():
             try :  #updating image URL in the database 
                 cursor.execute(updateQuery)
                 conn.commit()
+                
             except :
                 conn.rollback()
+                
                 error_msg = "Unable to update fork no for {}.\nFollowing error occured{}".format(row[0],
             traceback.format_exc())
                 slack_notification (error_msg)
     except:
             conn.rollback()
+            
             error_msg = "Unable to get all projects\n\n {}".format(
                     traceback.format_exc())
             slack_notification (error_msg)   
@@ -227,13 +245,16 @@ def updatewatcherNo():
             try :  #updating image URL in the database 
                 cursor.execute(updateQuery)
                 conn.commit()
+                
             except :
                 conn.rollback()
+                
                 error_msg = "Unable to update watcher no for {}.\nFollowing error occured{}".format(row[0],
             traceback.format_exc())
                 print (error_msg)
     except:
             conn.rollback()
+            
             error_msg = "Unable to get all projects\n\n {}".format(
                     traceback.format_exc())
             slack_notification (error_msg)   
@@ -251,10 +272,11 @@ def getwatchers(projectHandle):
 
 
 if __name__ == "__main__" :
-    updateCommits()
     updateProjectsJSON()
+    updateCommits()
     updatewatcherNo()
     updateProjectImage()
     updateForkNo()
+    conn.close()
 
 

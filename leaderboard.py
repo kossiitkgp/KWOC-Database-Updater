@@ -3,6 +3,8 @@ import traceback
 import json 
 import os
 from pprint import pprint
+from datetime import datetime
+
 def get_commitsOnline(username, repo_name):
     '''
     username : 'kshitij10496'
@@ -44,27 +46,38 @@ def getProjectsJson(repo) :
     query = "https://api.github.com/repos/{}/stats/contributors?access_token={}".format(repo,os.environ["DEFCON_GITHUB_AUTH_TOKEN"])
     print ("Getting details for {}".format(repo))
     response = requests.get(query).json()
+    # pprint (response)
     try :
         if "rate limit exceeded" in response["message"] :
             pprint(response)
-            print("Unable to get {}".format(repo))
-    except TypeError:
-        pass
+            slack_notification("Unable to get {}".format(repo))
+            return -1
+    except TypeError :
+        pass 
+    except :
+        slack_notification("Got following error {}".format(traceback.format_exc()))
+        return -1
     json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
 
 def getCommitsOffline(studentHandle,repo) :
     allCommits = json.load(open("projectsJSON/{}.json".format(repo.replace("/",".")) , "r"))
+    dec1Timestamp = datetime.fromtimestamp(1480575375)
     commits = 0
     try :
         for data in allCommits :
             if data["author"]["login"].lower() == studentHandle.lower() :
-                commits+=int(data["total"])
+                for week in data["weeks"] :
+                    if dec1Timestamp < datetime.fromtimestamp(int(week['w'])) :
+                        commits+=int(week["c"])
         return commits 
     except TypeError :
+        return 0 
+        pass 
+    except : 
         pprint (allCommits)
         msg = "Unable to get commits for {} in {}.\nFollowing error occured : {}".format(studentHandle,repo,traceback.format_exc())
-        # slack_notification(msg)
-        print (msg)
+        slack_notification(msg)
+        # print (msg)
         return 0   
 
 
@@ -82,4 +95,4 @@ def slack_notification(message):
                 print("in slack_notification : {}".format(r.status_code))
                 print(r.text)
 if __name__ == '__main__':
-    print get_commits('defcon-007', 'defcon-007/utilobot')
+    print getCommitsOffline('defcon-007', 'defcon-007/utilobot')
