@@ -52,7 +52,7 @@ def updateCommits():
         projectsList = cursor.fetchall()
         print projectsList
         for student in studentList :
-            print ("Getting commits for {}".format(student[0]))
+            # print ("Getting commits for {}".format(student[0]))
             commits = 0
             for project in  projectsList :
                 if not project[0] :
