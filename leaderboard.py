@@ -55,7 +55,7 @@ def getProjectsJson(repo) :
     except TypeError :
         pass 
     except :
-        slack_notification("Got following error {}".format(traceback.format_exc()))
+        slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
         return -1
     json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
 
