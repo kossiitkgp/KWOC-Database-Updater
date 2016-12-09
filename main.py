@@ -60,17 +60,18 @@ def updateCommits():
                 try :
                     # print ("Getting commits for {}".format(student[0]))
                     commits += getCommitsOffline(student[0],project[0])
-                    print ("Got {} commits for {} in {}".format(commits,student[0],project[0]))
+                    # print ("Got {} commits for {} in {}".format(commits,student[0],project[0]))
                 except :
                     error_msg = "Unable to get commits for {} in project {}.\nGot following error : {}".format(student[0],project[0],traceback.format_exc())
                     print (error_msg)
-            print ("Updating database")
+                    slack_notification(error_msg)
+            # print ("Updating database")
             updateQuery = "UPDATE student SET commits = '%s' where git_handle='%s'" % (str(commits),student[0]) 
             try :  #updating commits in student database 
                 cursor.execute(updateQuery)
                 conn.commit()
                 
-                print ("Database updated")
+                # print ("Database updated")
             except :
                 conn.rollback()
                 
