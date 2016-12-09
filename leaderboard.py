@@ -74,7 +74,7 @@ def getCommitsOffline(studentHandle,repo) :
         return 0 
         pass 
     except : 
-        pprint (allCommits)
+        # pprint (allCommits)
         msg = "Unable to get commits for {} in {}.\nFollowing error occured : {}".format(studentHandle,repo,traceback.format_exc())
         slack_notification(msg)
         # print (msg)

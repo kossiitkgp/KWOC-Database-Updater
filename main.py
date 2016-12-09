@@ -50,7 +50,7 @@ def updateCommits():
         studentList = cursor.fetchall()
         cursor.execute(query2)
         projectsList = cursor.fetchall()
-        print projectsList
+        # print projectsList
         for student in studentList :
             # print ("Getting commits for {}".format(student[0]))
             commits = 0
@@ -63,7 +63,7 @@ def updateCommits():
                     # print ("Got {} commits for {} in {}".format(commits,student[0],project[0]))
                 except :
                     error_msg = "Unable to get commits for {} in project {}.\nGot following error : {}".format(student[0],project[0],traceback.format_exc())
-                    print (error_msg)
+                    # print (error_msg)
                     slack_notification(error_msg)
             # print ("Updating database")
             updateQuery = "UPDATE student SET commits = '%s' where git_handle='%s'" % (str(commits),student[0]) 
@@ -76,8 +76,8 @@ def updateCommits():
                 conn.rollback()
                 
                 error_msg = "Unable to update commits for {} .\nFollowing error occured{}".format(student[0],traceback.format_exc())
-                print(error_msg)
-                # slack_notification (error_msg)
+                # print(error_msg)
+                slack_notification (error_msg)
 
             # print student[0]
             # if not student[5] :
@@ -91,8 +91,8 @@ def updateCommits():
             
             error_msg = "Unable to get all projects/students \nFollowing error occured {}".format(
                     traceback.format_exc())
-            print (error_msg)
-            # slack_notification (error_msg)    
+            # print (error_msg)
+            slack_notification (error_msg)    
 # def getCommitsOfStudent(student,projectsList) :
 #     global conn,cursor
 #     commits = 0
@@ -130,8 +130,8 @@ def updateProjectsJSON() :
             conn.rollback()
             error_msg = "Unable to get all projects \nFollowing error occured {}".format(
                     traceback.format_exc())
-            print (error_msg)
-            # slack_notification (error_msg) 
+            # print (error_msg)
+            slack_notification (error_msg) 
 
 
 def updateProjectImage():
@@ -252,7 +252,8 @@ def updatewatcherNo():
                 
                 error_msg = "Unable to update watcher no for {}.\nFollowing error occured{}".format(row[0],
             traceback.format_exc())
-                print (error_msg)
+                # print (error_msg)
+                slack_notification(error_msg)
     except:
             conn.rollback()
             
