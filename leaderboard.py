@@ -45,19 +45,19 @@ def get_commitsOnline(username, repo_name):
 def getProjectsJson(repo) :
     query = "https://api.github.com/repos/{}/stats/contributors?access_token={}".format(repo,os.environ["DEFCON_GITHUB_AUTH_TOKEN"])
     print ("Getting details for {}".format(repo))
-    response = requests.get(query).json()
-    # pprint (response)
     try :
-        if "rate limit exceeded" in response["message"] :
-            pprint(response)
-            slack_notification("Unable to get {}".format(repo))
-            return -1
-    except TypeError :
-        pass 
+        response = requests.get(query).json()
+        json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
+    # pprint (response)
     except :
-        slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
-        return -1
-    json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
+        if isinstance(response,dict):
+            # pprint(response)
+            slack_notification("Unable to get commits of {} \n\nGot the following response : {}".format(repo,response))
+            return -1
+        else :
+            slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
+            return -1
+    
 
 def getCommitsOffline(studentHandle,repo) :
     allCommits = json.load(open("projectsJSON/{}.json".format(repo.replace("/",".")) , "r"))
