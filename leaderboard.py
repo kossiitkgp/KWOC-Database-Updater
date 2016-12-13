@@ -68,6 +68,8 @@ def getCommitsOffline(studentHandle,repo) :
             if data["author"]["login"].lower() == studentHandle.lower() :
                 for week in data["weeks"] :
                     if dec1Timestamp <= datetime.fromtimestamp(int(week['w'])) :
+                        if int(week["c"]) :
+                            print ("Got {} commits for {} in {}".format(int(week["c"]),studentHandle,repo))
                         commits+=int(week["c"])
         return commits 
     except TypeError :
