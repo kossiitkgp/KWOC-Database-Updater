@@ -5,6 +5,7 @@ import traceback
 import json
 from leaderboard import *
 from threading import Thread
+import delJSONS
 
 try:
         import urlparse
@@ -279,6 +280,7 @@ if __name__ == "__main__" :
     updatewatcherNo()
     updateProjectImage()
     updateForkNo()
+    delJSONS.delJSON()
     conn.close()
 
 

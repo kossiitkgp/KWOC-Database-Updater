@@ -47,16 +47,15 @@ def getProjectsJson(repo) :
     print ("Getting details for {}".format(repo))
     try :
         response = requests.get(query).json()
-        json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
-    # pprint (response)
-    except :
         if isinstance(response,dict):
             # pprint(response)
             slack_notification("Unable to get commits of {} \n\nGot the following response : {}".format(repo,response))
             return -1
-        else :
-            slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
-            return -1
+        json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
+    # pprint (response)
+    except :
+        slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
+        return -1
     
 
 def getCommitsOffline(studentHandle,repo) :
