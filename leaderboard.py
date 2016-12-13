@@ -54,7 +54,7 @@ def getProjectsJson(repo) :
         json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
     # pprint (response)
     except :
-        slack_notification("Got following error {} \n\n {}".format(traceback.format_exc(),response))
+        slack_notification("Got following error {} \n\n {}".format(traceback.format_exc()))
         return -1
     
 
