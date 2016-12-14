@@ -4,6 +4,7 @@ import json
 import os
 from pprint import pprint
 from datetime import datetime
+import time 
 
 def get_commitsOnline(username, repo_name):
     '''
@@ -46,6 +47,7 @@ def getProjectsJson(repo) :
     query = "https://api.github.com/repos/{}/stats/contributors?access_token={}".format(repo,os.environ["DEFCON_GITHUB_AUTH_TOKEN"])
     print ("Getting details for {}".format(repo))
     try :
+        time.sleep(2)
         response = requests.get(query).json()
         if isinstance(response,dict):
             # pprint(response)
