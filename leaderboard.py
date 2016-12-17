@@ -51,8 +51,11 @@ def getProjectsJson(repo) :
         response = requests.get(query).json()
         if isinstance(response,dict):
             # pprint(response)
-            slack_notification("Unable to get commits of {} \n\nGot the following response : {}".format(repo,response))
-            return -1
+            time.sleep(20)
+            response = requests.get(query).json()
+            if isinstance(response,dict):
+                slack_notification("Unable to get commits of {} \n\nGot the following response : {}".format(repo,response))
+                return -1
         json.dump(response,open("projectsJSON/{}.json".format(repo.replace("/",".")) , "w"))
     # pprint (response)
     except :
@@ -89,7 +92,7 @@ def slack_notification(message):
                 "Content-Type": "application/json"
         }
         data = json.dumps({
-                "text": "In leaderboard.py  following error occured :\n{}".format(message)
+                "text": "In leaderboard.py from KWOC database updater  following error occured :\n{}".format(message)
         })
         r = requests.post(
                 os.environ["SLACK_WEBHOOK_URL"], headers=headers, data=data)
