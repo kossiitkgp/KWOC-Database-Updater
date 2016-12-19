@@ -35,6 +35,7 @@ def slack_notification(message):
 
     if r.status_code != 200:
         print("in slack_notification : {}".format(r.status_code))
+        print (message)
         print(r.text)
 
 def updateCommits():

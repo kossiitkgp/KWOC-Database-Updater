@@ -99,6 +99,7 @@ def slack_notification(message):
 
         if r.status_code != 200:
                 print("in slack_notification : {}".format(r.status_code))
+                print(message)
                 print(r.text)
 if __name__ == '__main__':
     print getCommitsOffline('AvijitGhosh82', 'AvijitGhosh82/material-chess-android')
